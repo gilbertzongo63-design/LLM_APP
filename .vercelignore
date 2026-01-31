@@ -1,4 +1,5 @@
 # Ignore backend and development files for Vercel
+backend/
 Dockerfile
 main.py
 requirements.txt
@@ -10,3 +11,4 @@ Procfile
 node_modules
 **/*.py
 **/*.md
+__pycache__

@@ -1,6 +1,9 @@
 backend/
 node_modules/
 .env
+.env.local
 .git/
 *.pyc
 __pycache__/
+*.log
+.DS_Store

@@ -19,18 +19,15 @@ class PdfExportService {
       margin = 10
     } = options;
 
-    // If a server-side PDF endpoint is configured, prefer that to avoid client rendering issues
-    const API_URL = (process.env.REACT_APP_API_URL || '').replace(/\/+$/, '');
-    const SERVER_KEY = process.env.REACT_APP_SERVER_API_KEY || '';
-    if (API_URL) {
-      try {
-        const html = (element && element.outerHTML) ? element.outerHTML : (typeof element === 'string' ? element : document.body.outerHTML);
-        const resp = await fetch(`${API_URL}/api/generate-pdf`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(SERVER_KEY ? { 'x-api-key': SERVER_KEY } : {})
-          },
+    // Use server-side PDF endpoint via relative path for Vercel deployment
+    const API_URL = '/api';
+    try {
+      const html = (element && element.outerHTML) ? element.outerHTML : (typeof element === 'string' ? element : document.body.outerHTML);
+      const resp = await fetch(`${API_URL}/generate-pdf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
           body: JSON.stringify({ html, filename })
         });
         if (!resp.ok) {
@@ -183,53 +180,49 @@ class PdfExportService {
     } = options;
 
     // If server-side endpoint configured, send minimal HTML to server for PDF generation
-    const API_URL = (process.env.REACT_APP_API_URL || '').replace(/\/+$/, '');
-    const SERVER_KEY = process.env.REACT_APP_SERVER_API_KEY || '';
-    if (API_URL) {
-      try {
-        const html = `
-          <html><head><meta charset="utf-8"><title>${resumeData.fullName || ''}</title>
-            <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px}h1{color:#2c3e50}</style>
-          </head><body>
-            <h1>${resumeData.fullName || ''}</h1>
-            <h2>${resumeData.title || ''}</h2>
-            <p>${resumeData.summary || ''}</p>
-            <h3>Expérience</h3><div>${resumeData.experience || ''}</div>
-            <h3>Formation</h3><div>${resumeData.education || ''}</div>
-            <h3>Compétences</h3><div>${Array.isArray(resumeData.skills)?resumeData.skills.join(', '):resumeData.skills||''}</div>
-          </body></html>
-        `;
-        // perform fetch (note: generateFromData is sync originally, so return a Promise here)
-        return fetch(`${API_URL}/api/generate-pdf`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(SERVER_KEY ? { 'x-api-key': SERVER_KEY } : {})
-          },
-          body: JSON.stringify({ html, filename })
-        }).then(async resp => {
-          if (!resp.ok) {
-            const txt = await resp.text();
-            throw new Error(`Server PDF generation failed: ${resp.status} ${txt}`);
-          }
-          const blob = await resp.blob();
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          return { success: true, filename, server: true };
-        }).catch(err => {
-          console.warn('Server generateFromData failed, falling back to client:', err);
-          // fall through to client-side below by not returning here
-          return null;
-        });
-      } catch (e) {
-        console.warn('Server-side generateFromData attempt failed:', e);
-      }
+    const API_URL = '/api';
+    try {
+      const html = `
+        <html><head><meta charset="utf-8"><title>${resumeData.fullName || ''}</title>
+          <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px}h1{color:#2c3e50}</style>
+        </head><body>
+          <h1>${resumeData.fullName || ''}</h1>
+          <h2>${resumeData.title || ''}</h2>
+          <p>${resumeData.summary || ''}</p>
+          <h3>Expérience</h3><div>${resumeData.experience || ''}</div>
+          <h3>Formation</h3><div>${resumeData.education || ''}</div>
+          <h3>Compétences</h3><div>${Array.isArray(resumeData.skills)?resumeData.skills.join(', '):resumeData.skills||''}</div>
+        </body></html>
+      `;
+      // perform fetch (note: generateFromData is sync originally, so return a Promise here)
+      return fetch(`${API_URL}/generate-pdf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ html, filename })
+      }).then(async resp => {
+        if (!resp.ok) {
+          const txt = await resp.text();
+          throw new Error(`Server PDF generation failed: ${resp.status} ${txt}`);
+        }
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return { success: true, filename, server: true };
+      }).catch(err => {
+        console.warn('Server generateFromData failed, falling back to client:', err);
+        // fall through to client-side below by not returning here
+        return null;
+      });
+    } catch (e) {
+      console.warn('Server-side generateFromData attempt failed:', e);
     }
 
     const pdf = new jsPDF({

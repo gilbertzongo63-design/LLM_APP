@@ -9,7 +9,8 @@ import CoverLetterBuilder from './components/CoverLetterBuilder'; // AJOUT IMPOR
 import ResumeView from './components/ResumeViewer';
 import Assistant from './components/Assistant';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+// Use relative paths for Vercel deployment (serverless functions accessible at /api/...)
+const API_BASE_URL = '/api';
 
 function App() {
   const [resumes, setResumes] = useState([]);
@@ -33,8 +34,8 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // Essayer de charger depuis l'API
-      const response = await fetch(`${API_BASE_URL}/api/resumes`);
+      // Essayer de charger depuis l'API (relative path for Vercel)
+      const response = await fetch(`${API_BASE_URL}/resumes`);
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
@@ -49,7 +50,7 @@ function App() {
       }
     } catch (err) {
       console.error('Error loading resumes from API:', err);
-      setError(`Error loading resumes: ${err.message}. Please make sure the server is running on ${API_BASE_URL}`);
+      setError(`Error loading resumes: ${err.message}. Please check the API endpoint.`);
       
       // Fallback: charger depuis les ressources publiques si l'API échoue
       try {

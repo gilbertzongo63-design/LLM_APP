@@ -1,14 +1,6 @@
-# Ignore backend and development files for Vercel
 backend/
-Dockerfile
-main.py
-requirements.txt
-server.js
-Procfile
+node_modules/
 .env
-.env.example
-.DS_Store
-node_modules
-**/*.py
-**/*.md
-__pycache__
+.git/
+*.pyc
+__pycache__/

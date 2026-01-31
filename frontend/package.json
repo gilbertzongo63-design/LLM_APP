@@ -16,12 +16,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "vercel-build": "npm run build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server": "node server.js",
-    "dev": "concurrently \"npm start\" \"npm run server\"",
-    "start:prod": "node server.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

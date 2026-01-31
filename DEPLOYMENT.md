@@ -114,6 +114,16 @@ npm start
 If you want, I can:
 - Create a production-ready Dockerfile and test build here.
 - Add Render/Vercel step-by-step screenshots or a CI workflow (GitHub Actions) to automate deployments.
+
+## Docker build note
+I added a `Dockerfile` that performs a multi-stage build: it compiles the React app then creates a Python runtime image that includes the frontend `build/` directory. You can build it locally with:
+
+```powershell
+cd Createur-CV-lettre_Motivation-app
+docker build -t llm_app:prod .
+```
+
+If Docker is not available locally, use your CI or Render's Docker deploy option. The image installs WeasyPrint system dependencies — the build may take several minutes.
 # 📦 Guide de Déploiement Complet
 
 ## Options de Déploiement

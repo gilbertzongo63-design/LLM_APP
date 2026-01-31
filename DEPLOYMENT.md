@@ -66,12 +66,30 @@ Render service settings
 
 ## Frontend: Vercel
 
-1. Import the repository in Vercel (GitHub) and set the Root Directory to `Createur-CV-lettre_Motivation-app`.
+Option A — Quick manual import (recommended):
+
+1. Import the repository in Vercel (GitHub) and set the **Root Directory** to `Createur-CV-lettre_Motivation-app`.
 2. Build Command: `npm run build` (or `npm ci && npm run build`).
 3. Output Directory: `build`.
-4. Environment variables: set `REACT_APP_API_URL` and `REACT_APP_SERVER_API_KEY` (if used).
+4. Environment variables (Project Settings):
+   - `REACT_APP_API_URL` = `https://<your-backend-render-url>` (optional)
+   - `REACT_APP_SERVER_API_KEY` = `Render17g415` (optional — note: this will be bundled client-side)
 
 Notes: The app will call the server `/api/generate-pdf` endpoint automatically if `REACT_APP_API_URL` is set; otherwise it uses client-side export.
+
+Option B — Automated deploy via GitHub Actions (CI):
+
+1. Add the following secrets in your GitHub repository (Settings → Secrets → Actions):
+   - `VERCEL_TOKEN` — your Vercel personal token
+   - `VERCEL_ORG_ID` — the Vercel organization id for your account
+   - `VERCEL_PROJECT_ID` — the Vercel project id (you can find it in the Vercel dashboard)
+2. The repository already includes a GitHub Actions workflow at `.github/workflows/deploy-vercel.yml` which will build and deploy the frontend to Vercel on each push to `main`.
+
+How to get the Vercel secrets:
+- `VERCEL_TOKEN`: In Vercel Dashboard → Account Settings → Tokens → Create Token
+- `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`: In Vercel Dashboard → Project Settings → General → you will find the IDs
+
+Security note: Do not place `API_KEY` (Render) directly in the Vercel project environment unless you accept that it becomes part of the client bundle (public). Prefer server-only secrets.
 
 ## Local testing
 

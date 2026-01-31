@@ -84,8 +84,10 @@ async def assistant(request: Request):
         # run a local CLI wrapper
         # ensure prompt is safely passed
         try:
+            # Escape double-quotes from the prompt safely before passing to shell
+            safe_prompt = prompt.replace('"', '\\"')
             proc = await asyncio.create_subprocess_shell(
-                f'{LLM_CMD} "{prompt.replace("\"","\\\"")}"',
+                f'{LLM_CMD} "{safe_prompt}"',
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )

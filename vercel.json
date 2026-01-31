@@ -6,6 +6,6 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "^/(?!api/|static/|asset-manifest.json|favicon.ico|manifest.json).*$", "dest": "/index.html" }
   ]
 }

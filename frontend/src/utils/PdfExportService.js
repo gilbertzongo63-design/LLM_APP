@@ -28,28 +28,25 @@ class PdfExportService {
         headers: {
           'Content-Type': 'application/json'
         },
-          body: JSON.stringify({ html, filename })
-        });
-        if (!resp.ok) {
-          const text = await resp.text();
-          throw new Error(`Server PDF generation failed: ${resp.status} ${text}`);
-        }
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        return { success: true, filename, server: true };
-      } catch (err) {
-        console.warn('Server-side PDF export failed, falling back to client-side:', err);
-        // fallthrough to client-side implementation
+        body: JSON.stringify({ html, filename })
+      });
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`Server PDF generation failed: ${resp.status} ${text}`);
       }
-    } catch (e) {
-      console.warn('Server-side generateFromData attempt failed:', e);
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      return { success: true, filename, server: true };
+    } catch (err) {
+      console.warn('Server-side PDF export failed, falling back to client-side:', err);
+      // fallthrough to client-side implementation
     }
 
     try {

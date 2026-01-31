@@ -1,0 +1,22 @@
+{
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "REACT_APP_API_URL": {
+      "description": "URL de base de l'API",
+      "value": "https://your-app-name.herokuapp.com",
+      "required": true
+    },
+    "REACT_APP_ENV": {
+      "description": "Environnement d'exécution",
+      "value": "production",
+      "required": false
+    },
+    "NODE_ENV": {
+      "value": "production"
+    }
+  }
+}

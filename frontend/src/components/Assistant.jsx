@@ -65,6 +65,7 @@ const Assistant = ({ isOpen, onClose }) => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getBotResponse = (userMessage) => {
     const msg = userMessage.toLowerCase();
 

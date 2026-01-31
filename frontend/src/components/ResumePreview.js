@@ -43,7 +43,7 @@ const ResumePreview = forwardRef(({ data, mode = 'desktop' }, ref) => {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               {data.profilePhoto && (
                 <div className="profile-photo-container" style={{ width: 80, height: 80, overflow: 'hidden', borderRadius: 8, background: '#fff' }}>
-                  <img src={data.profilePhoto} alt="Photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={data.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               )}
               <h1 style={{ fontFamily: data.font || 'Arial' }}>{data.fullName || 'Nom Prénom'}</h1>

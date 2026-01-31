@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import TemplateSelector from './TemplateSelector';
-import CreateResumeForm from './CreateResumeForm';
 import ResumePreview from './ResumePreview';
 import ExportButton from './ExportButton'; // Ajouter cet import
 import './ResumeBuilderPage.css';
@@ -39,10 +37,12 @@ const ResumeBuilderPage = () => {
     }
   }, [id]);
 
+  // eslint-disable-next-line no-unused-vars
   const handleFormChange = (newData) => {
     setResumeData(prev => ({ ...prev, ...newData }));
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleTemplateSelect = (template, color, font) => {
     setResumeData(prev => ({
       ...prev,
@@ -75,6 +75,7 @@ const ResumeBuilderPage = () => {
     navigate('/');
   };
 
+  // eslint-disable-next-line no-unused-vars
   const steps = [
     { number: 1, title: 'Informations', description: 'Remplissez vos informations' },
     { number: 2, title: 'Design', description: 'Choisissez un modèle' },

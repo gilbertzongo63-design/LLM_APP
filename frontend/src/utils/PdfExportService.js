@@ -48,6 +48,8 @@ class PdfExportService {
         console.warn('Server-side PDF export failed, falling back to client-side:', err);
         // fallthrough to client-side implementation
       }
+    } catch (e) {
+      console.warn('Server-side generateFromData attempt failed:', e);
     }
 
     try {

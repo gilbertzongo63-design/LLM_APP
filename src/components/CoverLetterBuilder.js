@@ -62,7 +62,7 @@ const CoverLetterBuilder = () => {
   };
 
   const handleDeleteLetter = (id) => {
-    if (!confirm('Supprimer cette lettre ?')) return;
+    if (!window.confirm('Supprimer cette lettre ?')) return;
     const stored = JSON.parse(localStorage.getItem('coverLetters') || '[]');
     const filtered = stored.filter(l => String(l.id) !== String(id));
     localStorage.setItem('coverLetters', JSON.stringify(filtered));

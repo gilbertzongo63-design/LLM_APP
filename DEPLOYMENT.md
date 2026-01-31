@@ -77,6 +77,11 @@ Option A — Quick manual import (recommended):
 
 Notes: The app will call the server `/api/generate-pdf` endpoint automatically if `REACT_APP_API_URL` is set; otherwise it uses client-side export.
 
+Serverless assistant on Vercel
+- A lightweight serverless assistant is available at `/api/assistant` when you deploy the frontend to Vercel (no backend required). It provides a rule-based fallback and optionally integrates with OpenAI if you set `OPENAI_API_KEY` in Vercel environment variables.
+- To enable OpenAI in Vercel, add `OPENAI_API_KEY` and (optionally) `OPENAI_MODEL` in Project Settings → Environment Variables.
+- This is useful when you do not want to run a backend service but still want the assistant to work publicly.
+
 Option B — Automated deploy via GitHub Actions (CI):
 
 1. Add the following secrets in your GitHub repository (Settings → Secrets → Actions):

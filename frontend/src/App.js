@@ -25,6 +25,7 @@ function App() {
   const [sortBy, setSortBy] = useState('title');
   const [assistantOpen, setAssistantOpen] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadResumes();
   }, []);

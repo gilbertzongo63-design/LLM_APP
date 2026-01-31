@@ -1,11 +1,6 @@
 export default async function handler(req, res) {
-  // Support a simple GET for health/status checks
-  if (req.method === 'GET') {
-    return res.json({ success: true, message: 'Assistant disponible — envoyez POST {"prompt":"..."} pour une réponse.' });
-  }
-
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'GET, POST');
+    res.setHeader('Allow', 'POST');
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 

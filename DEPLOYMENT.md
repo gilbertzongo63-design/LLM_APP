@@ -456,4 +456,21 @@ git push heroku main
 
 ---
 
+## ✅ Préparation rapide pour Vercel (FR)
+Suivez ces étapes pour déployer uniquement le frontend (gratuit, sans carte) et activer l'assistant serverless :
+
+1. Sur Vercel, cliquez sur **Import Project** → **From Git Repository** → choisissez votre repo.
+2. **Root Directory** : laissez vide (racine du repo) — le projet contient `package.json` à la racine.
+3. **Build Command** : `npm run build`
+4. **Output Directory** : `build`
+5. **Environment Variables** (optionnel) :
+   - `REACT_APP_API_URL` = `https://<votre-backend>` (laisser vide pour frontend-only)
+   - N'ajoutez **pas** de secret serveur public comme `REACT_APP_SERVER_API_KEY` si vous voulez garder la clé privée côté backend.
+6. Cliquez sur **Deploy** → une URL publique sera disponible, ex. `https://votre-projet.vercel.app`.
+7. Vérifiez `https://<votre-projet>.vercel.app/api/assistant` pour confirmer que la fonction serverless `api/assistant.js` est active.
+
+Conseil : si vous préférez que Vercel gère directement la build+API, gardez l'arborescence actuelle (`api/assistant.js` à la racine) — `vercel.json` (présent) configure le build et l'API.
+
+---
+
 **Dernière mise à jour** : Janvier 2026

@@ -8,8 +8,5 @@ Procfile
 .env.example
 .DS_Store
 node_modules
-**/src/**
-**/public/**
-**/build/**
 **/*.py
 **/*.md

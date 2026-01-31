@@ -8,25 +8,30 @@ Usage: llm_wrapper.py "Your prompt here"
 import sys
 import subprocess
 
-def main():
-    if len(sys.argv) < 2:
-        print('')
-        return
-    prompt = sys.argv[1]
-
+def call_llm(prompt: str) -> str:
+    """Call local LLM or return simulated response."""
     # Try gpt4all (example). Adjust path if needed.
     try:
         # This is an example command; users must install gpt4all or similar locally.
         proc = subprocess.run(['gpt4all', '-p', prompt], capture_output=True, text=True, timeout=120)
         if proc.returncode == 0 and proc.stdout:
-            print(proc.stdout)
-            return
+            return proc.stdout
     except Exception:
         pass
 
     # Fallback: simple echo / rule-based reply
     reply = "Réponse locale simulée: " + (prompt[:400] + ('...' if len(prompt) > 400 else ''))
-    print(reply)
+    return reply
+
+
+def main():
+    if len(sys.argv) < 2:
+        print('')
+        return
+    prompt = sys.argv[1]
+    result = call_llm(prompt)
+    print(result)
+
 
 if __name__ == '__main__':
     main()

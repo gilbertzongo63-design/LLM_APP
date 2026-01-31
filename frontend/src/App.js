@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import PdfExportService from './utils/PdfExportService';
@@ -25,12 +25,7 @@ function App() {
   const [sortBy, setSortBy] = useState('title');
   const [assistantOpen, setAssistantOpen] = useState(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    loadResumes();
-  }, []);
-
-  const loadResumes = async () => {
+  const loadResumes = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -70,7 +65,11 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadResumes();
+  }, [loadResumes]);
 
   const parseCSV = (csvText) => {
     const lines = csvText.split('\n').filter(line => line.trim() !== '');

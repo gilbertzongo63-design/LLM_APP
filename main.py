@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
+from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
@@ -40,6 +40,16 @@ SAMPLE_RESUMES = [
         "html": ""
     }
 ]
+
+
+async def _validate_api_key(request: Request):
+    """Allow an optional API key to protect endpoints. Set env `API_KEY` to enable."""
+    expected = os.environ.get('API_KEY')
+    if not expected:
+        return
+    key = request.headers.get('x-api-key') or request.query_params.get('api_key')
+    if not key or key != expected:
+        raise HTTPException(status_code=401, detail='Invalid API Key')
 
 
 @app.get('/api/health')
@@ -111,6 +121,29 @@ async def assistant(request: Request):
     if 'exporter' in msg or 'export' in msg:
         reply = "Utilisez le bouton Exporter en PDF depuis la carte ou l'aperçu."
     return {"success": True, "response": reply}
+
+
+@app.post('/api/generate-pdf')
+async def generate_pdf(request: Request, _=Depends(_validate_api_key)):
+    """Generate a PDF from provided HTML payload and return it as an attachment.
+
+    Body JSON: { "html": "<html>...</html>", "filename": "mon-cv.pdf" }
+    If `API_KEY` env var is set, client must provide header `x-api-key` with the same value.
+    """
+    body = await request.json()
+    html = body.get('html') or body.get('content')
+    filename = body.get('filename') or 'export.pdf'
+    if not html:
+        raise HTTPException(status_code=400, detail='HTML content required')
+    try:
+        # Import here to avoid hard dependency until this endpoint is used
+        from weasyprint import HTML
+        pdf_bytes = HTML(string=html).write_pdf()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'PDF generation failed: {e}')
+    return Response(content=pdf_bytes, media_type='application/pdf', headers={
+        'Content-Disposition': f'attachment; filename="{filename}"'
+    })
 
 
 # Serve static build if present

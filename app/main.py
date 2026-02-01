@@ -8,7 +8,11 @@ import subprocess
 import json
 from .llm_wrapper import call_llm
 
-app = FastAPI()
+app = FastAPI(
+    title="CV & Lettre de Motivation API",
+    description="API pour générer des CV et lettres de motivation",
+    version="1.0.0"
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,6 +45,24 @@ SAMPLE_RESUMES = [
         "html": ""
     }
 ]
+
+
+# ✅ Route racine pour accueil et infos API
+@app.get("/")
+def read_root():
+    """Root endpoint - returns API status and available endpoints"""
+    return {
+        "message": "API Backend pour CV et Lettre de Motivation",
+        "status": "running",
+        "version": "1.0.0",
+        "endpoints": {
+            "docs": "/docs",
+            "health": "/api/health",
+            "resumes": "/api/resumes",
+            "assistant": "/api/assistant",
+            "generate_pdf": "/api/generate-pdf"
+        }
+    }
 
 
 async def _validate_api_key(request: Request):

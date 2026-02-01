@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API_BASE_URL, API_KEY } from '../config';
+import { getAISuggestions } from '../services/aiService';
 import './Assistant.css';
 
 const Assistant = ({ isOpen, onClose }) => {
@@ -36,21 +36,13 @@ const Assistant = ({ isOpen, onClose }) => {
     setInputValue('');
     setIsLoading(true);
 
-    // Appeler l'API backend (/api/assistant)
+    // Appeler le service IA
     try {
-      const headers = {
-        'Content-Type': 'application/json'
-      };
-      if (API_KEY) {
-        headers['x-api-key'] = API_KEY;
-      }
-      const resp = await fetch(`${API_BASE_URL}/api/assistant`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ prompt: message })
-      });
-      const json = await resp.json();
-      const botText = json && json.success ? (json.response || 'Pas de réponse') : (json.error || 'Erreur');
+      const result = await getAISuggestions(message);
+      const botText = result.success 
+        ? (result.response || 'Pas de réponse disponible')
+        : (result.response || 'Erreur de connexion à l\'assistant');
+      
       const botResponse = {
         id: messages.length + 2,
         text: botText,
@@ -59,37 +51,17 @@ const Assistant = ({ isOpen, onClose }) => {
       };
       setMessages(prev => [...prev, botResponse]);
     } catch (err) {
+      console.error('❌ Assistant Error:', err);
       const botResponse = {
         id: messages.length + 2,
-        text: 'Erreur de connexion à l\'assistant local.',
+        text: 'Erreur de connexion à l\'assistant. Vérifiez votre connexion.',
         sender: 'bot',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, botResponse]);
-      console.error('Assistant API error', err);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const getBotResponse = (userMessage) => {
-    const msg = userMessage.toLowerCase();
-
-    if (msg.includes('créer') || msg.includes('nouveau')) {
-      return 'Pour créer un nouveau CV, cliquez sur le bouton "Créer un CV" dans le menu principal. Vous pourrez alors remplir vos informations personnelles et choisir un modèle.';
-    }
-    if (msg.includes('compétence') || msg.includes('skill')) {
-      return 'Les compétences clés à ajouter dépendent de votre domaine. Pour l\'IT: JavaScript, Python, React. Pour HR: Recrutement, Paie. Pour Marketing: SEO, Social Media, Analytics.';
-    }
-    if (msg.includes('exporter') || msg.includes('export')) {
-      return 'Vous pouvez exporter votre CV en PDF en cliquant sur le bouton "Exporter" dans l\'aperçu final. Le CV sera téléchargé sur votre ordinateur.';
-    }
-    if (msg.includes('modèle') || msg.includes('template')) {
-      return 'Nous avons plusieurs modèles disponibles: Moderne, Classique, Créatif et Minimaliste. Chacun peut être personnalisé avec des couleurs et des polices différentes.';
-    }
-    
-    return 'Je ne suis pas sûr de comprendre votre question. Pouvez-vous reformuler? Je peux vous aider avec: créer un CV, ajouter des compétences, exporter, ou choisir un modèle.';
   };
 
   const handleSuggestionClick = (suggestion) => {

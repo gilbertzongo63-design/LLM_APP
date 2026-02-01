@@ -31,8 +31,8 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // Essayer de charger depuis l'API (relative path for Vercel)
-      const response = await fetch(`${API_BASE_URL}/resumes`);
+      // Essayer de charger depuis l'API (utilise API_BASE_URL avec /api/resumes)
+      const response = await fetch(`${API_BASE_URL}/api/resumes`);
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }

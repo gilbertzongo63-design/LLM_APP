@@ -198,7 +198,7 @@ class PdfExportService {
         </body></html>
       `;
       // perform fetch (note: generateFromData is sync originally, so return a Promise here)
-      return fetch(`${API_URL}/generate-pdf`, {
+      return fetch(`${API_BASE_URL}/api/generate-pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -154,16 +154,7 @@ async def generate_pdf(request: Request, _=Depends(_validate_api_key)):
     })
 
 
-# Serve static build if present
-BUILD_DIR = os.path.join(os.path.dirname(__file__), 'build')
+# Serve static build if present (mount on /static, not root)
+BUILD_DIR = os.path.join(os.path.dirname(__file__), '..', 'build')
 if os.path.isdir(BUILD_DIR):
-    app.mount('/', StaticFiles(directory=BUILD_DIR, html=True), name='static')
-
-
-@app.exception_handler(404)
-async def custom_404_handler(request: Request, exc):
-    # If build exists, serve index.html for SPA routing
-    index_path = os.path.join(BUILD_DIR, 'index.html')
-    if os.path.exists(index_path):
-        return HTMLResponse(open(index_path, 'r', encoding='utf-8').read())
-    return JSONResponse(status_code=404, content={"detail": "Not Found"})
+    app.mount('/static', StaticFiles(directory=BUILD_DIR), name='static')

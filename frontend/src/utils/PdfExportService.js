@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { API_BASE_URL, API_KEY } from '../config';
 
 class PdfExportService {
   /**
@@ -19,15 +20,18 @@ class PdfExportService {
       margin = 10
     } = options;
 
-    // Use server-side PDF endpoint via relative path for Vercel deployment
-    const API_URL = '/api';
+    // Use server-side PDF endpoint via config (supports external backend)
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    if (API_KEY) {
+      headers['x-api-key'] = API_KEY;
+    }
     try {
       const html = (element && element.outerHTML) ? element.outerHTML : (typeof element === 'string' ? element : document.body.outerHTML);
-      const resp = await fetch(`${API_URL}/generate-pdf`, {
+      const resp = await fetch(`${API_BASE_URL}/api/generate-pdf`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers,
         body: JSON.stringify({ html, filename })
       });
       if (!resp.ok) {

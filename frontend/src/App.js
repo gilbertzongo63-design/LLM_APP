@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
+import { API_BASE_URL, API_KEY } from './config';
 import PdfExportService from './utils/PdfExportService';
 import CreateResumeForm from './components/CreateResumeForm';
 import ResumeBuilderPage from './components/ResumeBuilderPage';
@@ -10,7 +11,7 @@ import ResumeView from './components/ResumeViewer';
 import Assistant from './components/Assistant';
 
 // Use relative paths for Vercel deployment (serverless functions accessible at /api/...)
-const API_BASE_URL = '/api';
+// For external backend, use REACT_APP_API_URL from environment
 
 function App() {
   const [resumes, setResumes] = useState([]);

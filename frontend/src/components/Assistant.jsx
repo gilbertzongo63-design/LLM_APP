@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL, API_KEY } from '../config';
 import './Assistant.css';
 
 const Assistant = ({ isOpen, onClose }) => {
@@ -37,9 +38,15 @@ const Assistant = ({ isOpen, onClose }) => {
 
     // Appeler l'API backend (/api/assistant)
     try {
-      const resp = await fetch('/api/assistant', {
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (API_KEY) {
+        headers['x-api-key'] = API_KEY;
+      }
+      const resp = await fetch(`${API_BASE_URL}/api/assistant`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ prompt: message })
       });
       const json = await resp.json();

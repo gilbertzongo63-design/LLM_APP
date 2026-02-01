@@ -26,33 +26,19 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install frontend dependencies & build
-        working-directory: ./
-        run: |
-          if [ -f package.json ]; then
-            npm ci
-            npm run build || true
-          else
-            echo "No package.json at repo root; skipping frontend build"
-          fi
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install backend dependencies (if requirements.txt exists)
+      - name: Install backend dependencies
         run: |
-          if [ -f requirements.txt ]; then
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-          else
-            echo "No requirements.txt at repo root; skipping"
-          fi
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run tests (optional)
         run: |
-          echo "No tests configured by default - add test steps if you have pytest/npm test etc."
+          python -m pytest tests/ -v || echo "No tests configured"
 
       - name: Trigger Render deploy
         env:

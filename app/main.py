@@ -53,6 +53,11 @@ async def _validate_api_key(request: Request):
         raise HTTPException(status_code=401, detail='Invalid API Key')
 
 
+@app.get('/')
+async def root():
+    return {"message": "LLM CV App Backend", "status": "running", "docs": "/docs"}
+
+
 @app.get('/api/health')
 async def health():
     return {"status": "ok", "timestamp": asyncio.get_event_loop().time()}

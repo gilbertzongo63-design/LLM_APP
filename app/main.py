@@ -53,10 +53,6 @@ async def _validate_api_key(request: Request):
         raise HTTPException(status_code=401, detail='Invalid API Key')
 
 
-@app.get('/')
-def root():
-    """Root endpoint - returns API status"""
-    return {"message": "LLM CV App Backend", "status": "running", "docs_url": "/docs"}
 
 
 @app.get('/api/health')

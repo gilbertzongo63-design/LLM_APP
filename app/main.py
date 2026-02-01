@@ -54,8 +54,9 @@ async def _validate_api_key(request: Request):
 
 
 @app.get('/')
-async def root():
-    return {"message": "LLM CV App Backend", "status": "running", "docs": "/docs"}
+def root():
+    """Root endpoint - returns API status"""
+    return {"message": "LLM CV App Backend", "status": "running", "docs_url": "/docs"}
 
 
 @app.get('/api/health')

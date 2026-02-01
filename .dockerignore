@@ -10,4 +10,13 @@ coverage
 .vscode
 .idea
 *.swp
-*.swo
+*.swofrontend/
+.github/
+.vercelignore
+vercel.json
+heroku.json
+docker-compose.yml
+TROUBLESHOOTING.md
+VALIDATION_CHECKLIST.md
+DEPLOYMENT.md
+ARCHITECTURE.md

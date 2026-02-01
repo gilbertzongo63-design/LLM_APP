@@ -1,0 +1,18 @@
+{
+  "name": "cv-app-fullstack",
+  "version": "1.0.0",
+  "description": "CV & Motivation Letter Builder - Full Stack",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "python -m uvicorn app.main:app --reload --port 8000",
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "install-all": "npm install && cd frontend && npm install && cd ..",
+    "start": "node -e \"console.log('Use: npm run dev')\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

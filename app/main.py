@@ -97,57 +97,80 @@ async def get_resume(resume_id: str):
 
 @app.post('/api/assistant')
 async def assistant(request: Request):
-    body = await request.json()
-    prompt = body.get('prompt', '') if isinstance(body, dict) else ''
-    if not prompt:
-        raise HTTPException(status_code=400, detail='Prompt required')
+    """
+    Assistant IA - Endpoint pour générer des suggestions et réponses
+    """
+    try:
+        body = await request.json()
+        prompt = body.get('prompt', '') if isinstance(body, dict) else ''
+        
+        if not prompt:
+            raise HTTPException(status_code=400, detail='Prompt required')
 
-    LLM_CMD = os.environ.get('LLM_CMD')
-    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+        LLM_CMD = os.environ.get('LLM_CMD')
+        OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
-    if LLM_CMD:
-        # run a local CLI wrapper
-        # ensure prompt is safely passed
-        try:
-            # Escape double-quotes from the prompt safely before passing to shell
-            safe_prompt = prompt.replace('"', '\\"')
-            proc = await asyncio.create_subprocess_shell(
-                f'{LLM_CMD} "{safe_prompt}"',
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
-            stdout, stderr = await proc.communicate()
-            if proc.returncode != 0:
-                return JSONResponse(status_code=500, content={"success": False, "error": "LLM execution failed", "details": stderr.decode('utf-8', errors='ignore')})
-            return {"success": True, "response": stdout.decode('utf-8', errors='ignore')}
-        except Exception as e:
-            return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
+        # Try local LLM first
+        if LLM_CMD:
+            try:
+                safe_prompt = prompt.replace('"', '\\"')
+                proc = await asyncio.create_subprocess_shell(
+                    f'{LLM_CMD} "{safe_prompt}"',
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                )
+                stdout, stderr = await proc.communicate()
+                if proc.returncode == 0:
+                    response_text = stdout.decode('utf-8', errors='ignore').strip()
+                    return {
+                        "success": True,
+                        "response": response_text if response_text else "Réponse générée par LLM local"
+                    }
+            except Exception as e:
+                print(f"❌ LLM local error: {e}")
+                # Fall through to OpenAI or default
 
-    # Optional: fallback to OpenAI if key present
-    if OPENAI_API_KEY:
-        try:
-            import openai
-            openai.api_key = OPENAI_API_KEY
-            resp = openai.ChatCompletion.create(
-                model=os.environ.get('OPENAI_MODEL', 'gpt-3.5-turbo'),
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=512,
-            )
-            text = resp.choices[0].message.content
-            return {"success": True, "response": text}
-        except Exception as e:
-            return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
+        # Try OpenAI fallback
+        if OPENAI_API_KEY:
+            try:
+                import openai
+                openai.api_key = OPENAI_API_KEY
+                resp = openai.ChatCompletion.create(
+                    model=os.environ.get('OPENAI_MODEL', 'gpt-3.5-turbo'),
+                    messages=[{"role": "user", "content": prompt}],
+                    max_tokens=512,
+                )
+                text = resp.choices[0].message.content
+                return {"success": True, "response": text}
+            except Exception as e:
+                print(f"❌ OpenAI error: {e}")
+                # Fall through to default
 
-    # Default rule-based fallback
-    msg = prompt.lower()
-    reply = "Je ne suis pas sûr de comprendre votre question. Essayez: 'Créer un CV', 'Exporter', 'Compétences'."
-    if 'créer' in msg or 'nouveau' in msg:
-        reply = 'Pour créer un nouveau CV, utilisez le bouton Créer un CV.'
-    if 'compétence' in msg or 'skill' in msg:
-        reply = 'Compétences exemples: React, Python, SQL, Gestion de projet.'
-    if 'exporter' in msg or 'export' in msg:
-        reply = "Utilisez le bouton Exporter en PDF depuis la carte ou l'aperçu."
-    return {"success": True, "response": reply}
+        # Rule-based fallback
+        msg = prompt.lower()
+        reply = "Je ne suis pas sûr de comprendre votre question. "
+        
+        if 'créer' in msg or 'nouveau' in msg or 'cv' in msg:
+            reply += "Utilisez le bouton 'Créer un CV' pour démarrer."
+        elif 'compétence' in msg or 'skill' in msg or 'talent' in msg:
+            reply += "Compétences recommandées : Communication, Gestion de projet, Résolution de problèmes, Leadership, Adaptabilité."
+        elif 'exporter' in msg or 'export' in msg or 'pdf' in msg:
+            reply += "Utilisez le bouton 'Exporter en PDF' depuis l'aperçu ou la carte du CV."
+        elif 'lettre' in msg or 'motivation' in msg:
+            reply += "Cliquez sur 'Créer une lettre de motivation' pour générer une nouvelle lettre."
+        elif 'aide' in msg or 'help' in msg:
+            reply += "Je peux vous aider avec : créer un CV, générer une lettre, exporter en PDF, ou ajouter des compétences."
+        else:
+            reply += "Essayez : 'Créer un CV', 'Quelles compétences ajouter?', 'Comment exporter en PDF?'"
+        
+        return {"success": True, "response": reply}
+        
+    except Exception as e:
+        print(f"❌ Assistant error: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e), "response": "Erreur du serveur assistant"}
+        )
 
 
 @app.post('/api/generate-pdf')

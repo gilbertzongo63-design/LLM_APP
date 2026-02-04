@@ -134,9 +134,9 @@ const CoverLetterBuilder = () => {
       <div className="builder-header">
         <h1>✉️ Createur de CV et de Lettre de Motivation</h1>
         <p>Rédigez une lettre personnalisée pour accompagner votre CV</p>
-        <div style={{ marginLeft: 16, display: 'flex', gap: 8 }}>
-          <button className="action-btn" onClick={() => { setShowSaved(true); setShowForm(false); loadSavedItems(); }}>Voir lettres sauvegardées</button>
-          <button className="action-btn" onClick={() => { setShowForm(true); setShowSaved(false); }}>Créer une nouvelle lettre</button>
+        <div style={{ marginLeft: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button className="action-btn" onClick={() => { setShowSaved(true); setShowForm(false); loadSavedItems(); }}>📧 Voir lettres sauvegardées</button>
+          <button className="action-btn" onClick={() => { setShowForm(true); setShowSaved(false); }}>✍️ Créer une nouvelle lettre</button>
         </div>
       </div>
 

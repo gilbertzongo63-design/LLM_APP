@@ -327,20 +327,35 @@ const CreateResumeForm = ({ onSave, initialData = {} }) => {
         
         {!showForm && (
           <div style={{ marginTop: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3>CVs sauvegardés</h3>
-              <div>
-                <button type="button" className="btn-primary" onClick={() => setShowForm(true)}>Créer un nouveau CV</button>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '16px',
+              padding: '16px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '8px',
+              marginBottom: '16px'
+            }}>
+              <h3 style={{ margin: 0, flex: 1 }}>📋 CVs sauvegardés</h3>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button type="button" className="btn-primary" onClick={() => setShowForm(true)} style={{
+                  padding: '10px 20px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  whiteSpace: 'nowrap'
+                }}>➕ Créer un nouveau CV</button>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
               <input placeholder="Rechercher par nom / titre" value={filterText} onChange={e => setFilterText(e.target.value)} />
               <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}>
                 <option value="all">Toutes catégories</option>
                 {[...new Set(savedResumes.map(s => s.category).filter(Boolean))].map(c => <option key={c} value={c}>{c}</option>)}
               </select>
-              <button type="button" className="btn-secondary" onClick={loadSavedResumes}>Rafraîchir</button>
+              <button type="button" className="btn-secondary" onClick={loadSavedResumes}>🔄 Rafraîchir</button>
             </div>
 
             <div style={{ marginTop: 12 }}>
@@ -350,18 +365,18 @@ const CreateResumeForm = ({ onSave, initialData = {} }) => {
                 if (!text) return true;
                 return (r.fullName || r.title || '').toLowerCase().includes(text) || (r.skills || '').toString().toLowerCase().includes(text);
               }).map(r => (
-                <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 8, borderBottom: '1px solid #eee' }}>
-                  <div>
+                <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, marginBottom: 8, border: '1px solid #ddd', borderRadius: '6px', backgroundColor: '#fff', flexWrap: 'wrap', gap: '12px' }}>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
                     <strong>{r.fullName || r.title}</strong><br/>
-                    <small>{r.category} • {r.created ? new Date(r.created).toLocaleString() : ''}</small>
+                    <small style={{ color: '#666' }}>{r.category} • {r.created ? new Date(r.created).toLocaleString() : ''}</small>
                   </div>
-                  <div>
-                    <button type="button" className="btn-secondary" onClick={() => handleLoadSaved(r)}>Charger</button>
-                    <button type="button" className="btn-danger" style={{ marginLeft: 8 }} onClick={() => handleDeleteSaved(r.id)}>Supprimer</button>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button type="button" className="btn-secondary" onClick={() => handleLoadSaved(r)}>📂 Charger</button>
+                    <button type="button" className="btn-danger" onClick={() => handleDeleteSaved(r.id)}>🗑️ Supprimer</button>
                   </div>
                 </div>
               ))}
-              {savedResumes.length === 0 && <div style={{ marginTop: 8 }}>Aucun CV sauvegardé.</div>}
+              {savedResumes.length === 0 && <div style={{ marginTop: 8, padding: 12, textAlign: 'center', color: '#666', backgroundColor: '#f8f9fa', borderRadius: '6px' }}>Aucun CV sauvegardé.</div>}
             </div>
           </div>
         )}
@@ -377,8 +392,8 @@ const CreateResumeForm = ({ onSave, initialData = {} }) => {
                 </div>
               )}
             </div>
-            <div style={{ marginTop: 12 }}>
-              <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Voir CVs sauvegardés</button>
+            <div style={{ marginTop: 16, display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <button type="button" className="btn-secondary" onClick={() => setShowForm(false)} style={{ padding: '10px 20px', fontSize: '14px' }}>👁️ Voir CVs sauvegardés</button>
             </div>
           </>
         )}

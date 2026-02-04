@@ -43,9 +43,14 @@ const Assistant = ({ isOpen, onClose }) => {
         ? (result.response || 'Pas de réponse disponible')
         : (result.response || 'Erreur de connexion à l\'assistant');
       
+      // Ajouter un indicateur si la réponse vient du fallback
+      const finalText = result.fromFallback 
+        ? `[Mode Hors Ligne]\n${botText}`
+        : botText;
+      
       const botResponse = {
         id: messages.length + 2,
-        text: botText,
+        text: finalText,
         sender: 'bot',
         timestamp: new Date()
       };
@@ -54,7 +59,7 @@ const Assistant = ({ isOpen, onClose }) => {
       console.error('❌ Assistant Error:', err);
       const botResponse = {
         id: messages.length + 2,
-        text: 'Erreur de connexion à l\'assistant. Vérifiez votre connexion.',
+        text: 'Erreur de connexion à l\'assistant. Le mode hors ligne a été activé.',
         sender: 'bot',
         timestamp: new Date()
       };

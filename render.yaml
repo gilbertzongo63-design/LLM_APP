@@ -7,6 +7,9 @@ services:
     region: oregon
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    healthCheckInterval: 60
+    healthCheckTimeout: 30
     envVars:
       - key: PYTHON_VERSION
         value: '3.11'
@@ -14,3 +17,12 @@ services:
         value: ${OPENAI_API_KEY}
       - key: LLM_CMD
         value: ${LLM_CMD}
+      - key: CORS_ORIGINS
+        value: '*'
+    routes:
+      - path: /
+        matchType: PathPrefix
+        priority: 1
+      - path: /api
+        matchType: PathPrefix
+        priority: 2
